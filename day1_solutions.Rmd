@@ -90,14 +90,22 @@ x[11] <- 11       # add a 11th element
 
 If you want to try some code before putting it into the Markdown document, you can run it in the Console window below. After you hit enter, R will execute your statements. To look at a variable, just type its name and it enter. Alternatively, you can use the variable browser on the right. If you need help, just type a ? before the name  function. The help window will be shown on the right. You can also use this to explore additional options, which you may need for some of the assignments.
 
-1. Write code to create a vector with 5 ones and display it.
+Write code to create a vector with 5 ones and display it.
 
 ```{r}
 x <- rep(1,5)
 x
 ```
 
-2. Write code to create the vector `r c(1, 2, 3, 1, 2, 3, 1, 2, 3)` without having to specify all individual elements.
+Write code to create a vector with the numbers 5, 10, 15 and so on up to 100.
+
+```{r}
+x <- seq(5,100,by=5)
+x
+```
+
+
+Write code to create the vector `r c(1, 2, 3, 1, 2, 3, 1, 2, 3)` without having to specify all individual elements.
 
 
 ```{r}
@@ -105,12 +113,13 @@ x <- rep(c(1,2,3), 3)
 x
 ```
 
-3. Write code to create the vector `r c(1, 1, 1, 2, 2, 2, 3, 3, 3)` without having to specify all individual elements. Use ?rep for help.
+Write code to create the vector `r c(1, 1, 1, 2, 2, 2, 3, 3, 3)` without having to specify all individual elements. Use ?rep for help.
 
 ```{r}
 x <- rep(c(1,2,3), each=3)
 x
 ```
+
 
 
 
