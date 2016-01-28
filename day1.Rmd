@@ -1,0 +1,64 @@
+---
+title: "Introduction to R for Biostatistics - Day 1"
+output: html_document
+---
+
+##In-class worksheet 1
+
+**X of March, 2016**
+
+We will use R in this class mainly via R Markdown documents. R Markdown documents are documents that combine text, R code, and R output, including figures. They are a great way to produce self-contained and documented statistical analyses.
+
+In this first worksheet, you will learn how to do some basic markdown editing and some simple data manipulation in R. After you have made a change to the document, press "Knit HTML" in R Studio and see what kind of a result you get.
+
+Edit only below this line.
+
+---------------------------------------------
+## 1. Basic Markdown editing
+Try out basic R Markdown features. You may know the Markdown language from editing wikis. Write some text that is bold, and some that is in italics. Make a numbered list and a bulleted list. Make a nested list. 
+
+You can get bold text by enclo
+
+This text is **bold.**
+
+This text is *in italics.*
+
+A numbered list:
+
+1. Item 1
+2. Item 2
+3. Item 3
+
+A bulleted list:
+
+- Item 1
+- Item 2
+- Item 3
+
+A nested list:
+
+1. Item 1
+    - Item 1.1. Note that 4 spaces are required for the nesting to work properly.
+    - Item 1.2
+2. Item 2
+
+
+
+Block quote:
+
+> "If we knew what it was we were doing, it would not be called research, would it?" --- Albert Einstein
+
+
+Wir werden lernen, mit R grundlegende biostatistische Analysen durchzuführen. Dafür benötigen wir heute ersteinmal einige Grundlagen.
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
