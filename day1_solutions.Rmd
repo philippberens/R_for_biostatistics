@@ -7,9 +7,9 @@ output: html_document
 
 **X of March, 2016**
 
-We will use R in this class mainly via R Markdown documents. R Markdown documents are documents that combine text, R code, and R output, including figures. They are a great way to produce self-contained and documented statistical analyses.
+We will use R in this class mainly via R Markdown documents. R Markdown documents are documents that combine text, R code, and R output, including figures. They are a great way to produce self-contained and documented statistical analyses. 
 
-In this first worksheet, you will learn how to do some basic markdown editing and some simple data manipulation in R. After you have made a change to the document, press "Knit HTML" in R Studio and see what kind of a result you get.
+In this first worksheet, you will learn how to do some basic markdown editing and some simple data manipulation in R. After you have made a change to the document, press *Knit HTML* in R Studio and see what kind of a result you get.
 
 ## 1. Basic Markdown editing
 
@@ -46,7 +46,7 @@ A nested list:
 Formula:
 $$ x = \sqrt{y}$$
 
------------------
+
 ## 2. Variables, Assignments, Indexing
 
 ###Instructions
@@ -86,6 +86,21 @@ x[-1]             # get all but the 1st element
 x[11] <- 11       # add a 11th element 
 ```
 
+You can also store numbers in an array or matrix.
+
+```{r}
+A = matrix(seq(1,9,1), nrow=3, ncol=3)
+A
+```
+
+Elements are indexed by a row and column index. Row comes first. If you omit the index, the entire row/column is returned. 
+
+```{r}
+A = matrix(seq(1,9,1), nrow=3, ncol=3)
+A[1,]
+```
+
+
 ###Your assignments
 
 If you want to try some code before putting it into the Markdown document, you can run it in the Console window below. After you hit enter, R will execute your statements. To look at a variable, just type its name and it enter. Alternatively, you can use the variable browser on the right. If you need help, just type a ? before the name  function. The help window will be shown on the right. You can also use this to explore additional options, which you may need for some of the assignments.
@@ -104,9 +119,7 @@ x <- seq(5,100,by=5)
 x
 ```
 
-
 Write code to create the vector `r c(1, 2, 3, 1, 2, 3, 1, 2, 3)` without having to specify all individual elements.
-
 
 ```{r}
 x <- rep(c(1,2,3), 3)
@@ -119,6 +132,68 @@ Write code to create the vector `r c(1, 1, 1, 2, 2, 2, 3, 3, 3)` without having 
 x <- rep(c(1,2,3), each=3)
 x
 ```
+
+What is the difference between the two multiplication operators for matrices? 
+
+```{r}
+A <- matrix(seq(1,9,1), nrow=3, ncol=3)
+
+A*A
+A%*%A
+
+```
+
+Explore the use of *rowSums* and *columnSums*.
+
+```{r}
+A <- matrix(seq(1,9,1), nrow=3, ncol=3)
+
+rowSums(A)
+
+```
+
+## 3. Data frames
+
+###Instructions
+
+Data frames are special data containers used for storing data in a tabular form. You can effectively think of them as excel tables.
+
+There is a build-in data frame calles *iris* which contains measurements in centimeters of the variables sepal length and width and petal length and width, respectively, for 50 flowers from each of 3 species of iris. It is useful to start playing a bit with real data analysis. 
+
+Data frames come with a few useful functions for exploring their contents.
+
+
+```{r}
+names(iris)
+
+dim(iris)
+
+head(iris)
+
+```
+
+In addition, you can very easily compute summary statistics to get a first feel for your data:
+
+
+```{r}
+summary(iris)
+
+```
+
+
+
+
+
+
+
+###Your Assignments
+
+How can you look at the last entries in a data frame?
+
+
+
+
+
 
 
 
