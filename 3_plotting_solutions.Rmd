@@ -1,0 +1,98 @@
+--
+title: "Introduction to R for Biostatistics 3"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+library(dplyr)
+library(ggplot2)
+```
+
+#In-class worksheet 3
+
+**X of March, 2016**
+
+In this worksheet you will learn how to graphically display your data. R has a very wide range of different plotting routines, which allow you to generate publication style figures.
+
+## Plotting
+
+###Instructions
+
+histograms + grouped histograms
+
+meaning full axis labels
+
+```{r}
+salaries <- read.csv("D:/lab/teaching/statistics2016//R_for_biostatistics/salary.csv")
+
+## Basic histogram from the vector "rating". Each bin is .5 wide.
+## These both result in the same output:
+ggplot(salaries, aes(x=sl)) + geom_histogram(bins=10)
+# qplot(salaries$sl, binwidth=.5)
+
+```
+
+
+We can also overlay with a kernel density estimate (ie. smoothed)
+
+
+```{r}
+# Histogram overlaid with kernel density curve
+ggplot(salaries, aes(x=sl)) + 
+    geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
+                   bins=10,
+                   colour="black", fill="white") +
+    geom_density(alpha=.2, fill="#FF6666",adjust=.5)  # Overlay with transparent density plot
+
+
+```
+adding mean
+
+```{r}
+ggplot(salaries, aes(x=sl)) +
+    geom_histogram(bins=10, colour="black", fill="white") +
+    geom_vline(aes(xintercept=mean(sl, na.rm=T)),   # Ignore NA values for mean
+               color="red", linetype="dashed", size=1)
+
+```
+
+grouped histograms
+
+```{r}
+# Overlaid histograms
+ggplot(salaries, aes(x=sl, fill=sx)) +
+    geom_histogram(bins=10, alpha=.5, position="dodge")
+```
+
+faceted histograms
+
+```{r}
+# Overlaid histograms
+ggplot(salaries, aes(x=sl)) +
+    geom_histogram(bins=10, alpha=.5) + 
+    facet_grid(rk ~ . )
+```
+
+
+
+
+scatterplots + colored scatter plots
+
+
+
+
+
+
+
+boxplots
+```{r}
+# A basic box with the conditions colored
+ggplot(salaries, aes(x=rk, y=sl, fill=rk)) + geom_boxplot() + guides(fill=FALSE)
+
+```
+
+
+
+
+##Assignments
+
