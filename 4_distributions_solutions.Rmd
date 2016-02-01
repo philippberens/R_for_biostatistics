@@ -1,0 +1,28 @@
+--
+title: "Introduction to R for Biostatistics 4"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(Rmisc)
+
+```
+
+#In-class worksheet 4
+
+**X of March, 2016**
+
+In this worksheet you will learn to generate data from different distributions and how to graphically assess whether a dataset is normally distrbuted.
+
+## Generating data from distributions
+
+### Instructions
+
+
+
+
+##Assignments
+

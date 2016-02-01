@@ -77,6 +77,9 @@ head(car_data)
 
 You can customize the bevhavior of these functions in various ways, for example letting your change what it counts as separating columns (, vs tab). If you want to know more, see the help.
 
+
+ADD RECODING A VARIABLE!
+
 ###Your Assignments
 
 How can you look at the last entries in a data frame? Find out using the help.

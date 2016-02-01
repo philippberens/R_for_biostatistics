@@ -4,95 +4,182 @@ output: html_document
 ---
 
 ```{r global_options, include=FALSE}
+library(plyr)
 library(dplyr)
 library(ggplot2)
+library(Rmisc)
+
 ```
 
 #In-class worksheet 3
 
 **X of March, 2016**
 
-In this worksheet you will learn how to graphically display your data. R has a very wide range of different plotting routines, which allow you to generate publication style figures.
+In this worksheet you will learn how to graphically display your data. R has a very wide range of different plotting routines, which allow you to generate publication style figures. We will use a dataset on the salary discrimination in  college professors. The dataset comes from the book "Applied Linear Regression" by S. Weisberg (1985). Before you do any plotting load the dataset into your console and explore a bit with what you have learned.
 
 ## Plotting
 
-###Instructions
+### Instructions
 
-histograms + grouped histograms
+First we will look at how we can make histograms of continuous data. In a histogram you divide the x-axis into equally sized bins and count the number of observations falling into each bin.
 
-meaning full axis labels
+Creating nice looking plots in R requires a library called *ggplot2*. We already load it above. 
+
+*ggplot2* is very flexible and produces beautiful graphics, yet requires some getting used to. The best strategies is learning by example. You start out from an example given here in the lecture or find one on the internet and you modify it according to your needs.
+
+The command *ggplot* generates a new *ggplot* object, with the first argument specifying the dataset to use as a default for all elements of the plot. In addition, you specify an "aesthetic" or mapping, which determines which column of the datasets is mapped onto which axis in the plot. 
+
+**Histograms**
+We will first look at histograms, because they give a very rich description of the full distribution of a variable. We add the histogram to the plot, setting the number of bins to 10. Instead you can also specify the exact bin edges. Each type of plot (histogram, dotplot, ...) is called a *geometric object* in *ggplot2*. Per default, it uses the dataset specified for ggplot.
+
+Finally, we add axis labels to the plot and fix the font size.
 
 ```{r}
-salaries <- read.csv("D:/lab/teaching/statistics2016//R_for_biostatistics/salary.csv")
+salaries <- read.csv("D:/lab/teaching/statistics2016//R_for_biostatistics/salary.csv")    # read the dataset
 
-## Basic histogram from the vector "rating". Each bin is .5 wide.
-## These both result in the same output:
-ggplot(salaries, aes(x=sl)) + geom_histogram(bins=10)
-# qplot(salaries$sl, binwidth=.5)
+ggplot(salaries, aes(x=sl)) +     # specify default dataset and mapping
+  geom_histogram(bins=10) +       # add a histogram with 10 bins
+  xlab("Salary ($)") + ylab("Number") +   # add meaningful axis labels
+  theme_grey(base_size=14)                # change the font size  
 
 ```
 
 
-We can also overlay with a kernel density estimate (ie. smoothed)
+This somewhat complex syntax makes modifying the plot for more complex visualizations very easy, however. For example, we can easily add a kernel density estimate to the data, ie. a smoothed version. We need to change our code on slightly to do so. For better visualization, we also change the colors a bit.
 
 
 ```{r}
-# Histogram overlaid with kernel density curve
 ggplot(salaries, aes(x=sl)) + 
-    geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
-                   bins=10,
-                   colour="black", fill="white") +
-    geom_density(alpha=.2, fill="#FF6666",adjust=.5)  # Overlay with transparent density plot
+  geom_histogram(aes(y=..density..),      # change the y-axis to show density instead of count 
+                   bins=10,               
+                   fill="grey") +           # change the color to a lighter grey
+  geom_density(alpha=.2, fill="#FF6666",adjust=.2) +   # overlay with transparent density plot filled in red
+  xlab("Salary ($)") + ylab("Density") +   
+  theme_grey(base_size=14)                
 
 
 ```
-adding mean
+
+Finally, let's look at how to add the mean of the dataset to the plot. We add it as a *vline*-geom (for vertical line), where we have to provide a new mapping using *aes*, because we plot the mean, not the raw dataset.
 
 ```{r}
+
 ggplot(salaries, aes(x=sl)) +
-    geom_histogram(bins=10, colour="black", fill="white") +
-    geom_vline(aes(xintercept=mean(sl, na.rm=T)),   # Ignore NA values for mean
-               color="red", linetype="dashed", size=1)
+  geom_histogram(bins=10, fill="grey") +
+  geom_vline(aes(xintercept=mean(sl, na.rm=T)),       # compute mean and add to plot as vertical line
+               color="red", linetype="dashed", size=.75) + # specify the looks of the line
+  xlab("Salary ($)") + ylab("Number") +   
+  theme_grey(base_size=14)                
 
 ```
 
-grouped histograms
+In our data, we have multiple variables by which we can group the salaries, for exmaple the sex of the professor. To investigate its effect, we can make separate histograms of both groups and show them within a single figure. In *ggplot2* we do this by adding a *fill* argument to the mapping specified by *aes*. Where *x=* and *y=* specify what is shown on the respective axes, *fill* specifies another variable by which to group the data. 
+
+The most straightfoward option is to use a *stacked* histogram, where the bars for individual groups are displayed stacked on top of each other (i.e. the shape of the histogram does not change compared to the ungrouped histogram). This can be slightly confusing, and you can try to see what happens if you change position to *dodge*.   
+
 
 ```{r}
-# Overlaid histograms
+ggplot(salaries, aes(x=sl, fill=sx)) +     # fill determines which variable the data is grouped by
+  geom_histogram(bins=10, alpha=.5, position="stack") +   # position sets the way the histogram is plotted
+  xlab("Salary ($)") + ylab("Number") + 
+  theme_grey(base_size=14)  
+```
+
+Alternatively, we can use a concepts called *facets*, i. e. multiple subplots. These can also be very easily created in *ggplot*. We create facet plots for different ranks (assistant, associate or full professor), keeping the same grouping for sex as in the previous histogram. The synatx for facets looks a bit weird, but is just a general R style formula you will encounter again when fitting regression models.
+
+```{r}
 ggplot(salaries, aes(x=sl, fill=sx)) +
-    geom_histogram(bins=10, alpha=.5, position="dodge")
+    geom_histogram(bins=10,alpha=.5, position="stack") + 
+    facet_grid(rk ~ . ) +                      # facet the plot by the rank of the professor. 
+    xlab("Salary ($)") + ylab("Number") + 
+    theme_grey(base_size=14)  
 ```
 
-faceted histograms
+
+**Summary plots**
+
+After looking at all the histograms, we may want to condense our data somewhat for more compact visualization. For example, we may want to make a graph with error bars for showing the mean and standard deviation only for each group. To this end, we first need to compute a summary of our data, containing the means and standard deviation for each of the desired groups. One could do that manually, but there is a nice helper function called *summarySE* in the package *Rmisc*. Look at the contents of *salaries_sum* in your Console window. We then add the errorbars, the means and a (strickly speaking not neccessary) line for connecting the means. I like the errorbars produced by *pointrange* better then those by *errorbar*; the latter command gives you the standard error bars.
 
 ```{r}
-# Overlaid histograms
-ggplot(salaries, aes(x=sl)) +
-    geom_histogram(bins=10, alpha=.5) + 
-    facet_grid(rk ~ . )
+
+salaries_sum <- summarySE(data = salaries, measurevar = "sl", groupvars = c("rk", "sx"))    
+
+pd <- position_dodge(0.1)   # offset the groups a little to avoid 
+                  
+# The errorbars overlapped, so use position_dodge to move them horizontall
+ggplot(salaries_sum, aes(x=rk, y=sl, colour=sx)) + 
+    geom_pointrange(aes(ymin=sl-sd, ymax=sl+sd), position=pd) +    # add errorbars
+    geom_point(position=pd) +                      # add points       
+    geom_line(position=pd, aes(group=sx)) +        # add line
+    xlab("Rank") + ylab("Salary") + 
+    theme_grey(base_size=14)
+
 ```
 
 
+As an alternative, box plots are a great way of summarizing data, that reveal a bit more about the data than just means and standard deviations. A boxplot consists of multiple elements: The line in the middle is the median, the boundaries of the box reach to the 25th and 75th percetile (called quartiles) of the data. The whiskers extending above and below are 1.5 times the inter quartile range. Data points outside of this range are marked as little dots.
 
-
-scatterplots + colored scatter plots
-
-
-
-
-
-
-
-boxplots
 ```{r}
-# A basic box with the conditions colored
-ggplot(salaries, aes(x=rk, y=sl, fill=rk)) + geom_boxplot() + guides(fill=FALSE)
 
+ggplot(salaries, aes(x=rk, y=sl, fill=sx)) + 
+    geom_boxplot(width=.5) +       # add a box plot with slightly smaller width than normal
+    xlab("Rank") + ylab("Salary") + 
+    theme_grey(base_size=14)  
 ```
 
+**Scatter plots**
 
+Of course, we can also examine the relationship between variables, using scatter plots. Let's look at the relationship between the years since the highest degree earned and salary.
+
+```{r}
+
+ggplot(salaries, aes(x=yd, y=sl)) + 
+    geom_point() +       # add a scatter plot
+    xlab("Years since highest degree") + ylab("Salary") + 
+    theme_grey(base_size=14)  
+```
+
+We can even add a smooth fit with confidence intervals to the figure without much hassle (even without understanding precisely what it does). The fit shows nicely that experience since the highest degree matters up to about 20 years.
+
+```{r}
+
+ggplot(salaries, aes(x=yd, y=sl)) + 
+    geom_point() +       
+    geom_smooth(color='black') +      # add a smoothed version of the data
+    xlab("Years since highest degree") + ylab("Salary") + 
+    theme_grey(base_size=14)  
+```
 
 
 ##Assignments
+
+Now you will graphically explore another dataset on the influence of the moon phase on the admissions into a psychiatric hospital. The data has been devided into after, before and during full moon. In addition, the month of admission is recorded.
+
+
+
+```{r}
+moon = read.table('D:/lab/teaching/statistics2016/R_for_biostatistics/fullmoon.txt',header=TRUE)
+
+moon$Moon = as.factor(moon$Moon)
+
+ggplot(moon,aes(x=Admissions)) + geom_histogram(bins=15)
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
