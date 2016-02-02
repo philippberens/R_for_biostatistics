@@ -160,19 +160,78 @@ Now you will graphically explore another dataset on the influence of the moon ph
 ```{r}
 moon = read.table('D:/lab/teaching/statistics2016/R_for_biostatistics/fullmoon.txt',header=TRUE)
 
-moon$Moon = as.factor(moon$Moon)
+# For our analysis we bin the months by season
 
-ggplot(moon,aes(x=Admissions)) + geom_histogram(bins=15)
+moon$Season <- mapvalues(moon$Month, from = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), to=c("Winter","Winter","Spring","Spring","Spring","Summer","Summer","Summer","Fall","Fall","Fall","Winter"))
 
+# To make sure the plots come out intuitively, we make sure the factor levels come out correctly. 
 
+moon$Season <- factor(moon$Season, levels=c("Spring", "Summer", "Fall", "Winter"))
+moon$Moon <- factor(moon$Moon, levels=c("Before","During","After"))
 
 
 ```
 
+First, as always, explore the data frame.
 
+```{r}
 
+head(moon)
 
+summary(moon)
 
+```
+
+Create a histogram of the number of admissions into the hospital. Choose a suitable number of bins or binsize. Add a axis labels. Also add the mean number of admissions to the histogram with a green solid line.
+
+```{r}
+
+ggplot(moon,aes(x=Admission)) + geom_histogram(bins=15) +   
+  geom_vline(aes(xintercept=mean(Admission, na.rm=T)),       # compute mean and add to plot as vertical line
+               color="green", linetype="solid", size=.75) + # specify the looks of the line
+  xlab("Admissions") + ylab("Frequency") +   
+  theme_grey(base_size=14)          
+
+```
+
+Try to find out graphically, if the moon phase has an influence on the admissions. You can do this either using facets or stacked histograms.
+
+```{r}
+
+ggplot(moon,aes(x=Admission)) + geom_histogram(bins=15) + 
+  facet_grid(Moon ~ .) + 
+  xlab("Admissions") + ylab("Frequency") +   
+  theme_grey(base_size=14)          
+
+```
+
+Now, compute group means and standard deviations for all combinations of moon phase and season. Plot a point plot with s.d. error bars which shows how hospital admissions vary as a function of season (x-axis) and moon phase. 
+
+```{r}
+
+moon_gp <- summarySE(data = moon, measurevar = "Admission", groupvars = c("Moon", "Season"))    
+
+pd <- position_dodge(0.1)   # offset the groups a little to avoid 
+                  
+# The errorbars overlapped, so use position_dodge to move them horizontall
+ggplot(moon_gp, aes(x=Season, y=Admission, colour=Moon)) + 
+    geom_pointrange(aes(ymin=Admission-sd, ymax=Admission+sd), position=pd) +    # add errorbars
+    geom_point(position=pd) +                      # add points       
+    geom_line(position=pd, aes(group=Moon)) +        # add line
+    xlab("Season") + ylab("Admissions") + 
+    theme_grey(base_size=14)
+
+```
+
+For the same question, also create a boxplot.
+
+```{r}
+
+ggplot(moon, aes(x=Season, y=Admission, fill=Moon)) + 
+    geom_boxplot(width=.5) +       # add a box plot with slightly smaller width than normal
+    xlab("Season") + ylab("Admissions") + 
+    theme_grey(base_size=14)  
+```
 
 
 
