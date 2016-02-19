@@ -9,7 +9,7 @@ library(dplyr)
 
 #In-class worksheet 2
 
-**X of March, 2016**
+**29 Feb to 4 Mar, 2016**
 
 In this worksheet you will familiarize yourself with an important data structure called data frame. It is very useful for lots of data analysis tasks.
 

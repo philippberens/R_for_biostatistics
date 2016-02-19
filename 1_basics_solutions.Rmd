@@ -9,7 +9,7 @@ library(dplyr)
 
 ##In-class worksheet 1
 
-**X of March, 2016**
+**29 Feb to 4 Mar, 2016**
 
 We will use R in this class mainly via R Markdown documents. R Markdown documents are documents that combine text, R code, and R output, including figures. They are a great way to produce self-contained and documented statistical analyses. 
 

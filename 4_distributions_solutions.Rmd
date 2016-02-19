@@ -9,20 +9,189 @@ library(dplyr)
 library(ggplot2)
 library(Rmisc)
 
+set.seed(1)    # this makes everything reproducible
+
 ```
 
 #In-class worksheet 4
 
-**X of March, 2016**
+**29 Feb to 4 Mar, 2016**
 
-In this worksheet you will learn to generate data from different distributions and how to graphically assess whether a dataset is normally distrbuted.
+In this worksheet you will learn to generate data from different distributions and how to graphically assess whether a dataset is normally distrbuted. Please answer the questions in the document.
 
 ## Generating data from distributions
 
 ### Instructions
 
+For many applications, it is important to be able to generate random numbers from specified distributions. R contains functions for handling many distributions, also of course for the normal distribution. Indeed, there is a whole family of functions for generating data from a normal distribution (*rnorm*), to obtain the normal density function (*dnorm*) and the cumulative density function (*pnorm*). Let's start with generating some data: 
+
+
+```{r}
+
+m = 5   # mean
+s = 2   # sd
+
+x <- rnorm(50, mean = m, sd = s)      # generate 50 samples form a normal distribution with mean 5 and sd 2
+data = data.frame(x)
+
+ggplot(data, aes(x=x)) +     
+  stat_bin(aes(y=..count../sum(..count..))) +       # histogram of the samples with 20 bins
+  geom_vline(aes(xintercept=mean(x, na.rm=T)),        # compute mean of the samples and add to plot as vertical line
+             color="green", linetype="dashed", size=.75) + 
+  geom_vline(aes(xintercept=m),                 # add true mean to plot as vertical line
+             color="red", linetype="dashed", size=.75) + 
+  stat_function(fun = dnorm, colour = "red", 
+                arg = list(mean = m, sd=s)) +   # add the gaussian density with the true parameters
+  
+  xlab("x") + ylab("Fraction") +   
+  theme_grey(base_size=14)  + 
+  xlim(m-3*s, m+3*s)
+```
+
+Is the sample mean the same as the true mean? 
+
+> Provide your answer here.
+
+Run the cell multiple times. Does the histogram always look the same and lead to the same mean?
+
+> Provide your answer here.
+
+Play with the parameters of the distribution to observe what changes (mind the scale of the x-axis!).
+
+> Provide your answer here.
+
+Let's look at the relationship between the sample size and the variability of the mean in a bit more detail. We will now generate 1000 samples of the same mean and sd for each of a set of sample sizes. For each of these, we will not look at the distribution of the data points, but at the distribution of the *means* of each sample. 
+
+```{r}
+
+m = 5   # mean
+s = 2   # sd
+n = c(10, 20, 50, 200, 500)   # we will compute the mean from samples of these sizes 
+rep = 1000           # for each sample size, we will do that 1000 times
+
+
+# this loop generates the data - try to understand it
+x = numeric(length(n)*rep)
+nsamp = numeric(length(n)*rep)
+
+for(i in 1:length(n)){
+  for(j in 1:rep){
+    x[(i-1)*rep+j] = mean(rnorm(n[i],mean=m,sd=s))
+    nsamp[(i-1)*rep+j] = n[i]
+  }
+}
+
+data = data.frame(x,nsamp)
+
+
+# we create faceted histograms of the data
+ggplot(data, aes(x=x)) +
+  geom_histogram(aes(y=..density..),bins=50,alpha=.5, position="stack") + 
+  facet_grid(nsamp ~ . ) +                       
+  xlab("Sample mean") + ylab("Density") + 
+  theme_grey(base_size=14)  
+
+```
+
+Are there any samples whos mean is larger than six for samples of size 10? What about samples of size 500?
+
+> Provide your answer here.
+
+Describe how the with of the distribution of means changes with the sample size.  
+
+> Provide your answer here.
+
+The width of this distribution is called the standard error of the mean. This quantity is the standard deviation of the distribution of means and is defined as $SEM=\frac{\sigma}{\sqrt{N}}$. We can check graphically that this formula is correct:
+
+```{r}
+
+# compute summary statistics about the distribution of means
+data_sum <- summarySE(data = data, measurevar = "x", groupvars = c("nsamp"))    
+
+semfun <- function(n,s) {s/sqrt(n)}   # this is the SEM formula
+
+ggplot(data_sum, aes(x=nsamp, y=sd)) +  # the sd of the distribution of means is the SEM
+  geom_point() +      
+  stat_function(fun=semfun, args = list(s=2) ) +  # here we evaluate the SEM formula     
+  xlab("Number of samples") + ylab("SEM") + 
+  theme_grey(base_size=14)  
+```
+
+This looks reassuring. The points are all on the line. What does this mean?
+
+> Provide your answer here.
+
+We are now able to generate samples from a Normal distribution. In addition, we are interested in the question, what fraction of samples lies below a certain value. We can easily obtain this number from a *cumulative histogram*: 
+
+```{r}
+
+m = 5   # mean
+s = 2   # sd
+
+x <- rnorm(50, mean = m, sd = s)      # generate 50 samples form a normal distribution with mean 5 and sd 2
+data = data.frame(x)
+
+ggplot(data,aes(x=x)) +
+  geom_histogram(aes(y=cumsum(..count..)), bins = 20) + 
+  ylab("Cumulative count")
+
+```
+
+In the sample, roughly how many samples are smaller than 2.5?
+
+> Provide your answer here.
+
+How can you use this plot to graphically estimate the mean? Add the required lines to the plot (use the *+geom_hline* command).
+
+> Provide your answer here.
+
+Such a function is also defined for the Normal distribution, not only for samples from it. There it is called the *cumulative density function* or *distribution function*. It is very useful, because it let's you assess the percentiles of certain values quite easily. This is how it looks (for comparison, the density is shown with dashes):
+
+```{r}
+
+m = 5   # mean
+s = 2   # sd
+
+x <- -5:-1:15      
+data = data.frame(x)
+
+ggplot(data,aes(x=x)) +
+  stat_function(fun = pnorm, colour = "red", 
+                arg = list(mean = m, sd=s)) +   # add the gaussian density with the true parameters
+  stat_function(fun = dnorm, colour = "red", 
+                arg = list(mean = m, sd=s), linetype="dashed") +   # add the gaussian density with the true parameters
+  ylab("Cumulative density")
+
+```
+
+If you are given a cumulative density function, you can find out the mean and the standard deviation of a dataset. How? 
+
+> Provide your answer here.
+
+For many applications, it is important to diagnose whether a given dataset is from a Normal distribution or not. One graphical tool to do this are *qq-plots*.
+
+```{r}
+
+m = 5   # mean
+s = 2   # sd
+
+x <- rnorm(50, mean = m, sd = s)      # generate 50 samples form a normal distribution with mean 5 and sd 2
+data = data.frame(x)
+
+
+ggplot(data,aes(sample=x)) +
+  stat_qq()
+
+ggplot(data, aes(sample = data$column1)) + stat_qq(color="firebrick2", alpha=1) + geom_abline(intercept = mean(data$column1), slope = sd(data$column1))
+
+```
+
+
+###Assignments
 
 
 
-##Assignments
+## Assessment of normality
+
+
 

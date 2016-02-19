@@ -13,7 +13,7 @@ library(Rmisc)
 
 #In-class worksheet 3
 
-**X of March, 2016**
+**29 Feb to 4 Mar, 2016**
 
 In this worksheet you will learn how to graphically display your data. R has a very wide range of different plotting routines, which allow you to generate publication style figures. We will use a dataset on the salary discrimination in  college professors. The dataset comes from the book "Applied Linear Regression" by S. Weisberg (1985). Before you do any plotting load the dataset into your console and explore a bit with what you have learned.
 
