@@ -168,9 +168,11 @@ If you are given a cumulative density function, you can find out the mean and th
 
 > Provide your answer here.
 
-For many applications, it is important to diagnose whether a given dataset is from a Normal distribution or not. One graphical tool to do this are *qq-plots*.
+For many applications, it is important to diagnose whether a given dataset is from a Normal distribution or not. One graphical tool to do this are *qq-plots*. *qq* stand for quantile-quantile plots. What the plot does is plot the quantile of the actual data values against the corresponding quantiles of a standard Normal distribution.
 
 ```{r}
+
+set.seed(99)
 
 m = 5   # mean
 s = 2   # sd
@@ -180,18 +182,88 @@ data = data.frame(x)
 
 
 ggplot(data,aes(sample=x)) +
-  stat_qq()
-
-ggplot(data, aes(sample = data$column1)) + stat_qq(color="firebrick2", alpha=1) + geom_abline(intercept = mean(data$column1), slope = sd(data$column1))
+  stat_qq(color="firebrick2", alpha=1) + 
+  geom_abline(intercept = mean(x), slope = sd(x))
 
 ```
 
+If the sample follows roughly a Normal distribution, the points lie approximately on a straight line. The slope of that line is the standard deviation, the y-intercept the mean. Except for the most extreme point, the sample we plotted follows a straight line pretty well. 
 
-###Assignments
+How is the plot constructed? Let's say we have a sample of N points.
+
+1. Sort the points in the sample.
+
+2. For the k-th value, compute $(k-.5)/N$ and obtain the value where it should lie given a normal distribution. You can think of this as starting at $(k-.5)/N$ on the y-axis and going to the right until you hit the cumulative distribution function of a standard normal distribution. Then you go straight down until you hit the x-axis. The direct way to compute this number of is the inverse distribution function or quantile function, called *qnorm*. Find out how it works using ?. 
+
+3. Make a scatter plot of the sorted points and the theoretical expected values, assuming a standard normal. If the data comes from a normal, you expect the points to lie roughly on a straight line. If not, they can form all kinds of shapes.
+
+Now implement this construction "by hand" and compare to the plot above.
+
+```{r}
+
+set.seed(99)
+
+m = 5   # mean
+s = 2   # sd
+
+x <- rnorm(50, mean = m, sd = s)      # generate 50 samples form a normal distribution with mean 5 and sd 2
+
+# ASSIGNMENT
+xs = sort(x)
+N = length(x)
+p = (1:N - .5)/(N)
+
+q = qnorm(p)
+
+data = data.frame(xs,q)
+
+ggplot(data,aes(x=q,y=xs)) +
+  geom_point()
 
 
+```
 
-## Assessment of normality
+Now, finally let's use the diagnose if some samples are normally distributed or not. Of course, this is not a rigorous quantitative procedure, but in many cases it is quite helpful. Read the data from *qqplot.csv*. There are four data sets combined in one data frame, only one of which is normally distributed. Visualize the data using histograms and use QQ-plots to find out which is likely normally distributed.
+
+```{r}
+
+# set.seed(552)
+
+# idx <- factor(sample(1:4))
+
+# generating data
+# m = 5   # mean
+# s = 2   # sd
+# 
+# x <- rnorm(100, mean = m, sd = s)      # generate 50 samples form a normal distribution with mean 5 and sd 2
+# data <- data.frame(x=x,set=idx[1])
+# 
+# x <- rlnorm(100,mean=1,sdlog=1)
+# data <- rbind(data,data.frame(x=x,set=idx[2]))
+# 
+# x <- rgamma(100,shape=.5, scale=1)
+# data <- rbind(data,data.frame(x=x,set=idx[3]))
+# 
+# x <- rt(100,df=2)
+# data <- rbind(data,data.frame(x=x,set=idx[4]))
+
+data = read.csv("D:/lab/teaching/statistics2016/R_for_biostatistics/qqplot.csv")
+
+
+ggplot(data, aes(sample=x)) +
+  stat_qq() +
+  facet_grid(. ~ set)
+
+
+```
+
+Which dataset is likely normally distributed?
+
+> Provide your answer here.
+
+What can you say about the shape of the other distributions by looking at the qq-plots?
+
+> Provide your answer here.
 
 
 

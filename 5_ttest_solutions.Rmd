@@ -11,13 +11,71 @@ library(Rmisc)
 
 ```
 
-#In-class worksheet 4
+#In-class worksheet 5
 
-**X of March, 2016**
+**29 Feb to 4 Mar, 2016**
 
-In this worksheet you will learn how to use t-tests in R.
+In this worksheet you will learn how to compute confidence intervals and use t-tests in R.
 
-## Generating data from distributions
+## Confidence intervals
+
+Please review briefly sample and population.
+
+> Your answer here.
+
+In many cases, we are interested in not only estimating a mean of a population from a finite sample, but also quantifying our uncertainty about it.
+
+We can do this by computing a confidence interval. The 95%-confidence interval encompasses - if the experiment was to be repeated many times - the true mean in 95% of the cases. Note that for any single instantiation of the experiment you can never be sure. 
+
+For the confindence interval, we need again the quantity called standard error of the mean. As you have seen in the simulations before, this measures the precision with which the mean can be estimated from the data. 
+
+The confidence interval is given by: $m \pm t_{\alpha/2,n-1} SE$
+
+The $t_{\alpha/2,n-1}$ is the $100 \cdot (1-\alpha/2)$-percentile of a t-distribution. You can estimate this using the quantile function for the t-distribution *qt*. The t-distribution has a free parameter called degrees of freedom, and we set it to $n-1$.
+
+Consider an example, in which you want to estimate the height of student population. By hand, compute the mean and 95%-confidence interval.
+
+```{r}
+library(MASS)                  # load the MASS package 
+height.response = na.omit(survey$Height)
+
+# your code here
+n = length(height.response) 
+s = sd(height.response)        # sample standard deviation 
+SE = s/sqrt(n)                 # standard error estimate 
+E = qt(.975, df=n???1)???SE        # error margin
+
+xbar = mean(height.response)   # sample mean 
+xbar + c(???E, E)                # mean and 95% CI
+
+```
+
+Please write a short sentence describing your result.
+
+> Your answer here.
+
+Often you also need to compute a confidence for a proportion. There are different ways how to do this. A simple approximation is to use the following formula:
+
+$$ \bar{p} \pm z_{\alpha/2} \sqrt{\frac{\bar{p}(1-\bar{p})}{n+4}} $$
+
+Here, $z_{\alpha/2}$ is the $100 \cdot (1-\alpha/2)$-percentile of a normal distribution and can be obtain using *qnorm*. 
+
+
+
+## single sample t-test by hand & with function
+
+- plotting data and reference value
+- Checking assumptions
+- test statistic
+- null hypothesis + test statistic
+- computing p
+- running this using a function
+
+## two sample t-test 
+
+## paired t-test
+
+## non-parametric tests
 
 ### Instructions
 
