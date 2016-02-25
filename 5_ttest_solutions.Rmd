@@ -1,5 +1,5 @@
 --
-title: "Introduction to R for Biostatistics 4"
+title: "Introduction to R for Biostatistics 5"
 output: html_document
 ---
 
@@ -8,9 +8,8 @@ library(plyr)
 library(dplyr)
 library(ggplot2)
 library(Rmisc)
-
+library(MASS)  
 ```
-
 #In-class worksheet 5
 
 **29 Feb to 4 Mar, 2016**
@@ -27,42 +26,156 @@ In many cases, we are interested in not only estimating a mean of a population f
 
 We can do this by computing a confidence interval. The 95%-confidence interval encompasses - if the experiment was to be repeated many times - the true mean in 95% of the cases. Note that for any single instantiation of the experiment you can never be sure. 
 
-For the confindence interval, we need again the quantity called standard error of the mean. As you have seen in the simulations before, this measures the precision with which the mean can be estimated from the data. 
+For the confindence interval, we need again the quantity called standard error of the mean. As you have seen in the simulations before, this measures the precision with which the mean can be estimated from the data. Typically, if a 95%-CI does not overlap with a reference value, we say that the value is significantly different from that value. 
 
-The confidence interval is given by: $m \pm t_{\alpha/2,n-1} SE$
+### Confidence interval for the mean
 
-The $t_{\alpha/2,n-1}$ is the $100 \cdot (1-\alpha/2)$-percentile of a t-distribution. You can estimate this using the quantile function for the t-distribution *qt*. The t-distribution has a free parameter called degrees of freedom, and we set it to $n-1$.
+The confidence interval for the mean is given by: $m \pm t_{\alpha/2,n-1} SE$
+
+The $t_{\alpha/2,n-1}$ is the $100 \cdot (1-\alpha/2)$-percentile of a t-distribution. You can estimate this using the quantile function for the t-distribution *qt*. The t-distribution has a free parameter called degrees of freedom, and we set it to $n-1$. 
 
 Consider an example, in which you want to estimate the height of student population. By hand, compute the mean and 95%-confidence interval.
 
 ```{r}
-library(MASS)                  # load the MASS package 
 height.response = na.omit(survey$Height)
 
 # your code here
 n = length(height.response) 
 s = sd(height.response)        # sample standard deviation 
 SE = s/sqrt(n)                 # standard error estimate 
-E = qt(.975, df=n???1)???SE        # error margin
+E = qt(.975, n-1) * SE
 
 xbar = mean(height.response)   # sample mean 
-xbar + c(???E, E)                # mean and 95% CI
-
+xbar + c(-E,E)                 # mean and 95%-CI
 ```
+
 
 Please write a short sentence describing your result.
 
 > Your answer here.
 
+### Confidence interval for a proportion
+
 Often you also need to compute a confidence for a proportion. There are different ways how to do this. A simple approximation is to use the following formula:
 
-$$ \bar{p} \pm z_{\alpha/2} \sqrt{\frac{\bar{p}(1-\bar{p})}{n+4}} $$
+$$ \bar{p} \pm z_{\alpha/2} \sqrt{\frac{\bar{p}(1-\bar{p})}{n}} $$
 
 Here, $z_{\alpha/2}$ is the $100 \cdot (1-\alpha/2)$-percentile of a normal distribution and can be obtain using *qnorm*. 
 
+For the same survey data, estimate the proportion of male students with 95%-confidence interval. For this you will need that for a bernoulli variable (a binary outcome variable), the standard deviation is $\sqrt{p(1-p)}$.
 
 
-## single sample t-test by hand & with function
+```{r}
+                # load the MASS package 
+student.sex = na.omit(survey$Sex)
+
+
+# your code here
+n_male = sum(student.sex == "Male");
+
+n = length(student.sex) 
+p = n_male / n
+s = sqrt(p*(1-p))           # sample standard deviation 
+SE = s/sqrt(n)            # standard error estimate 
+E = qnorm(.975) * SE        # error margin
+
+p + c(-E, E)                # mean and 95% CI
+
+```
+
+Write a conclusion sentence.
+
+> Your answer here.
+
+As we said, this is an approximation. For values around 0.5, this approximation is good, but there are more complicated formulas for values close to 0 and 1.
+
+## Tests
+
+In the lecture, you learned about statistical null hypothesis testing. This is a very standardized procedures that is used extensively all over the biomedical literature. It works as follows:
+
+1. **You define a null hypothesis.** Typically it states that there is no effect.
+2. **Calculate a test statistic.** This measures a property of the data related to what you want to test. Typically larger (absolute) values mean that the data is in stronger disagreement with the null hypothesis.
+3. Determine the **distribution of the test statistic** assuming your null-hypothesis is true.
+4. From this distribution, **compute the p-value**, the probability that the test statistic will be as or more extreme than the observed value of the test statistic, according to this distribution.
+5. **Compare the p-value** to the desired $\alpha$-level. If it is smaller, reject the null hypothesis.
+
+
+### Chi-square test for two independent samples
+
+The qui-square test is useful for comparing the proportion of success of a dichotomous variable to a reference level or between two or more groups. Let's consider the case where we compare proportions between two groups. For example, we would like to test whether boys and girls prefer different TV shows. 80 boys and 130 girls were asked if they prefer *The Lone Ranger* or *Sesame Street*. We want to know if the proportion of boys preferring *The Lone Ranger* is the same as for girls and so on. You can find the tabulated results in the next code section. Write down the null hypothesis and the alternative hypothesis in your own words .
+
+> Your answer here.
+
+As a test statistic we use:
+
+$$\chi^2 = \sum_{i=(boys,girls)}{}\sum_{j=(lr,ss)}{2} \frac{(o_{ij}-e_{ij})^2}{e_{ij}}$$
+
+Here, $o_{ij}$ are the observed values for each cell and $e_{ij}=frac{n_r n_c}{n}$ is the expected value for a given tv show and sex.   
+
+If the null hypothesis is true, the test statistic follows a so-called chi2-distribution with 1 degree of freedom, because we have two categories. Using this information, we can compute the p-value. 
+
+Implement the missing lines of code. The *filter* function may come in handy. 
+
+```{r}
+preferences <- read.csv("D:/lab/teaching/statistics2016/R_for_biostatistics/tvshows.csv")
+
+# find out what the function count does!
+tab <- count(preferences,sex,tvshow)
+
+# extract the cell counts, i.e. the observed n for each combination of sex and tv show
+n_boys_lr = filter(tab,sex=="boy",tvshow=="loneranger")$n 
+n_girls_lr = filter(tab,sex=="girl",tvshow=="loneranger")$n 
+n_boys_ss = filter(tab,sex=="boy",tvshow=="sesame")$n 
+n_girls_ss = filter(tab,sex=="girl",tvshow=="sesame")$n 
+
+# compute row n's, i.e. how many boys/girls
+n_boys = sum(filter(tab,sex=="boy")$n) 
+n_girls = sum(filter(tab,sex=="girl")$n) 
+
+# compute column n's, i.e. how many prefer the shows irrespective of their sex
+n_lr = sum(filter(tab,tvshow=="loneranger")$n)
+n_ss = sum(filter(tab,tvshow=="sesame")$n)
+
+# compute total n
+n = n_boys+n_girls
+
+# compute expected counts
+e_boys_lr = n_boys*n_lr/n
+e_boys_ss = n_boys*n_ss/n
+e_girls_lr = n_girls*n_lr/n
+e_girls_ss = n_girls*n_ss/n
+
+# compute chi2
+chi2 =  (n_boys_lr-e_boys_lr)^2/e_boys_lr + 
+        (n_boys_ss-e_boys_ss)^2/e_boys_ss +
+        (n_girls_lr-e_girls_lr)^2/e_girls_lr +
+        (n_girls_ss-e_girls_ss)^2/e_girls_ss
+
+chi2
+
+# compute p-value
+p = 1-pchisq(chi2,1)
+
+p
+
+```
+
+Formulate a sentence summarizing this result.
+
+> Your answer here.
+
+Let's compare our manual result to the result of the corresponding R function:
+
+```{r}
+chisq.test(preferences$sex,preferences$tvshow,correct=FALSE)
+```
+
+This looks reassuring.
+
+
+### Two sample t-test 
+
+As you heard in the lecture 
 
 - plotting data and reference value
 - Checking assumptions
@@ -71,16 +184,7 @@ Here, $z_{\alpha/2}$ is the $100 \cdot (1-\alpha/2)$-percentile of a normal dist
 - computing p
 - running this using a function
 
-## two sample t-test 
+### Paired t-test
 
-## paired t-test
-
-## non-parametric tests
-
-### Instructions
-
-
-
-
-##Assignments
+### Non-parametric tests
 
