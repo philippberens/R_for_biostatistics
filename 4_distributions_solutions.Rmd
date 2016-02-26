@@ -164,7 +164,7 @@ ggplot(data,aes(x=x)) +
 
 ```
 
-If you are given a cumulative density function, you can find out the mean and the standard deviation of a dataset. How? 
+If you are given a cumulative density function of a normal distribution, you can find out the mean and the standard deviation of a normally dsitributed dataset. How? 
 
 > Provide your answer here.
 
@@ -193,7 +193,7 @@ How is the plot constructed? Let's say we have a sample of N points.
 
 1. Sort the points in the sample.
 
-2. For the k-th value, compute $(k-.5)/N$ and obtain the value where it should lie given a normal distribution. You can think of this as starting at $(k-.5)/N$ on the y-axis and going to the right until you hit the cumulative distribution function of a standard normal distribution. Then you go straight down until you hit the x-axis. The direct way to compute this number of is the inverse distribution function or quantile function, called *qnorm*. Find out how it works using ?. 
+2. For the k-th value, compute $(k-.5)/N$ (maybe mention here that k is called the rank and that we actually use Rankit here to compute p but that there are other methods doing that?)and obtain the value where it should lie given a normal distribution. You can think of this as starting at $(k-.5)/N$ on the y-axis and going to the right until you hit the cumulative distribution function of a standard normal distribution. Then you go straight down until you hit the x-axis. The direct way to compute this number of is the inverse distribution function or quantile function, called *qnorm*. Find out how it works using ?. 
 
 3. Make a scatter plot of the sorted points and the theoretical expected values, assuming a standard normal. If the data comes from a normal, you expect the points to lie roughly on a straight line. If not, they can form all kinds of shapes.
 
