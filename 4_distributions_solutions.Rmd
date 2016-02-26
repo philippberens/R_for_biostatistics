@@ -35,7 +35,7 @@ x <- rnorm(50, mean = m, sd = s)      # generate 50 samples form a normal distri
 data = data.frame(x)
 
 ggplot(data, aes(x=x)) +     
-  stat_bin(aes(y=..count../sum(..count..))) +       # histogram of the samples with 20 bins
+  stat_bin(aes(y=..count../sum(..count..))) +       # histogram of the samples with 20 bins ?Q: why using stat_bin instead of                                                      geom_hist as in the last lesson, maybe explain the link between the two/differences/advantages
   geom_vline(aes(xintercept=mean(x, na.rm=T)),        # compute mean of the samples and add to plot as vertical line
              color="green", linetype="dashed", size=.75) + 
   geom_vline(aes(xintercept=m),                 # add true mean to plot as vertical line
