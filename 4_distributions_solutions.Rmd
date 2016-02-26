@@ -191,9 +191,9 @@ If the sample follows roughly a Normal distribution, the points lie approximatel
 
 How is the plot constructed? Let's say we have a sample of N points.
 
-1. Sort the points in the sample.
+1. Sort the points in the sample. The position in the sorted sample is called rank. We call it k.
 
-2. For the k-th value, compute $(k-.5)/N$ (maybe mention here that k is called the rank and that we actually use Rankit here to compute p but that there are other methods doing that?)and obtain the value where it should lie given a normal distribution. You can think of this as starting at $(k-.5)/N$ on the y-axis and going to the right until you hit the cumulative distribution function of a standard normal distribution. Then you go straight down until you hit the x-axis. The direct way to compute this number of is the inverse distribution function or quantile function, called *qnorm*. Find out how it works using ?. 
+2. For the k-th value, compute $(k-.5)/N$ and obtain the value where it should lie given a normal distribution. You can think of this as starting at $(k-.5)/N$ on the y-axis and going to the right until you hit the cumulative distribution function of a standard normal distribution. Then you go straight down until you hit the x-axis. The direct way to compute this number of is the inverse distribution function or quantile function, called *qnorm*. Find out how it works using ?. 
 
 3. Make a scatter plot of the sorted points and the theoretical expected values, assuming a standard normal. If the data comes from a normal, you expect the points to lie roughly on a straight line. If not, they can form all kinds of shapes.
 

@@ -170,10 +170,36 @@ Let's compare our manual result to the result of the corresponding R function:
 chisq.test(preferences$sex,preferences$tvshow,correct=FALSE)
 ```
 
-This looks reassuring.
-
+If you implemented everything correctly, this will look reassuring.
 
 ### Two sample t-test 
+
+The t-test is widely used for comparing the means of two independent samples. It assumes that the data is normally distributed. In practise, the test is quite robust against violations of this assumption, but many journals require you justifying its use nonetheless. If the data is normally distributed, the test has more power (i.e. lower type II error rate) than its non-parametric alternatives.
+
+We will work on the blood pressure example from the lecture. That is, we sample 20 patients and assign them to two groups randomly. The two groups are treated with two different hypertensive drugs for lowering blood pressure. As we have learned before, explore the data and create a suitable plot for comparing the two groups.  
+
+```{r}
+data <- read.csv("D:/lab/teaching/statistics2016/R_for_biostatistics/bloodpressur.csv",sep=";")
+data$Group = factor(data$Group)
+
+sData = summarySE(data,measurevar="mmHg", groupvars="Group")
+
+ggplot(data, aes(x = Group, y = mmHg)) + 
+  geom_jitter(height = 0, width = .2) + 
+    geom_pointrange(sData, mapping= aes(ymin=mmHg-se, ymax=mmHg+se))+
+    xlab("Treatment group") + ylab("mmHg") + 
+    theme_grey(base_size=14) + 
+    ylim(5,25)
+
+```
+
+Formulate the null and the alternative hypothesis.
+
+> Your answer here.
+
+The test statistic is 
+$$ t = \frac{m_1 - m_2}{\sqrt{s_1^2 + s_2^2}} \sqrt{\frac{n_1 n_2}{n_1 + n_2}} $$
+
 
 As you heard in the lecture 
 
