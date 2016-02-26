@@ -182,17 +182,18 @@ summary(moon)
 
 ```
 
-Create a histogram of the number of admissions into the hospital. Choose a suitable number of bins or binsize. Add a axis labels. Also add the mean number of admissions to the histogram with a green solid line.
+Create a histogram of the number of admissions into the hospital. Choose a suitable number of bins or binsize. Add axis labels. Also add the mean number of admissions to the histogram with a green solid line.
 
 ```{r}
 
 ggplot(moon,aes(x=Admission)) + geom_histogram(bins=15) +   
   geom_vline(aes(xintercept=mean(Admission, na.rm=T)),       # compute mean and add to plot as vertical line
-               color="green", linetype="solid", size=.75) + # specify the looks of the line
+               color="green", linetype="solid", size=.75) +  # specify the looks of the line
   xlab("Admissions") + ylab("Frequency") +   
   theme_grey(base_size=14)          
 
 ```
+(Discuss here what is a suitable number of bins. What is the minimum number of bins given a certain sample size? When can you definitely tell that your binning is to coarse/fine? Whith which bin size do you see most structure in your data?)
 
 Try to find out graphically, if the moon phase has an influence on the admissions. You can do this either using facets or stacked histograms.
 
@@ -204,8 +205,13 @@ ggplot(moon,aes(x=Admission)) + geom_histogram(bins=15) +
   theme_grey(base_size=14)          
 
 ```
+or
 
-Now, compute group means and standard deviations for all combinations of moon phase and season. Plot a point plot with s.d. error bars which shows how hospital admissions vary as a function of season (x-axis) and moon phase. 
+```{r}
+ggplot(moon, aes(x = Admission,fill = Moon)) + geom_histogram(bins = 15,position='stack') + theme_gray(base_size = 14)
+```
+
+Now, compute group means and standard deviations over admissions for all combinations of moon phase and season. Plot a point plot with s.d. error bars which shows how hospital admissions vary as a function of season (x-axis) and moon phase. 
 
 ```{r}
 
