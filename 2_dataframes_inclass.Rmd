@@ -1,0 +1,130 @@
+---
+title: "Introduction to R for Biostatistics 2"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+library(dplyr)
+```
+
+#In-class worksheet 2
+
+**29 Feb to 4 Mar, 2016**
+
+In this worksheet you will familiarize yourself with an important data structure called data frame. It is very useful for lots of data analysis tasks.
+
+## Data frames
+
+###Instructions
+
+Data frames are special data containers used for storing data in a tabular form. You can effectively think of them as excel tables.
+
+There is a build-in data frame calles *iris* which contains measurements in centimeters of the variables sepal length and width and petal length and width, respectively, for 50 flowers from each of 3 species of iris. It is useful to start playing a bit with real data analysis. 
+
+Data frames come with a few useful functions for exploring their contents.
+
+
+```{r}
+names(iris)
+
+dim(iris)
+
+head(iris)
+
+```
+
+In addition, you can very easily compute summary statistics to get a first feel for your data:
+
+```{r}
+summary(iris)
+
+```
+
+You can easily extract columns by name from a data frame:
+
+```{r}
+iris$Sepal.Length[1:5] # gets the first 5 entries of the column called Sepal.Length
+```
+
+Alternatively, you can index them just as you would in a matrix:
+
+```{r}
+iris[1:5,1:2]     # gets the first 5 entries of the first two columns
+```
+
+One useful feature of data frames is that there are packages providing efficient data handling functions. One package to do so is called *dplyr*. It allows you to group a data frame by a variable and then apply certain functions to those groups. This allows very compact computation of summary statistics, for example.
+
+```{r}
+
+
+iris_by_species <- group_by(iris,Species)
+
+summarise(iris_by_species,
+            n(),                  # number of cases
+            mean(Sepal.Width),    # mean
+            sd(Sepal.Width))      # sd
+
+```
+
+Also, there a functions for reading data frames from e.g. excel or csv files in which you may have stored your raw data.
+
+```{r}
+car_data = read.csv("D:/lab/teaching/statistics2016/R_for_biostatistics/mtcars.csv")
+
+head(car_data)
+
+```
+
+You can customize the bevhavior of these functions in various ways, for example letting your change what it counts as separating columns (, vs tab). If you want to know more, see the help.
+
+###Your Assignments
+
+How can you look at the last entries in a data frame? Find out using the help.
+
+```{r}
+# your code here
+```
+
+The package *dplyr* provides also a function to select rows from a dataset matching a certain condition. The function is called *filter*. Use it to filter all rows with a petal width > 2. Which species do they belong to?
+
+```{r}
+# your code here
+# head(large_iris)
+```
+
+Now try arranging the data by Sepal.Length using the function *arange*.
+
+```{r}
+# your code here
+# head(sorted_iris)
+```
+
+Now you will analyze a new dataset (salary.dat), containing the income of 52 professors in a small US college and several other variables. The variables are:
+
+- sx = Sex, coded 1 for female and 0 for male
+- rk = Rank, coded
+    - 1 for assistant professor,
+    - 2 for associate professor, and
+    - 3 for full professor
+- yr = Number of years in current rank
+- dg = Highest degree, coded 1 if doctorate, 0 if masters
+- yd = Number of years since highest degree was earned
+- sl = Academic year salary, in dollars.
+
+Load the data and compute how many male and female professors there are and what they earn on average in as little code as possible. 
+
+```{r}
+salaries <- read.csv("D:/lab/teaching/statistics2016//R_for_biostatistics/salary.csv")
+
+# your code here
+
+```
+
+
+
+
+
+
+
+
+

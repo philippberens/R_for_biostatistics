@@ -160,36 +160,25 @@ moon = read.table('D:/lab/teaching/statistics2016/R_for_biostatistics/fullmoon.t
 
 # For our analysis we bin the months by season
 # mapvalues is a very useful function for recoding values in a column in a dataframe
+
 moon$Season <- mapvalues(moon$Month, from = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), to=c("Winter","Winter","Spring","Spring","Spring","Summer","Summer","Summer","Fall","Fall","Fall","Winter"))
 
 # To make sure the plots come out intuitively, we make sure the factor levels come out correctly. 
 
 moon$Season <- factor(moon$Season, levels=c("Spring", "Summer", "Fall", "Winter"))
 moon$Moon <- factor(moon$Moon, levels=c("Before","During","After"))
-
-
 ```
 
 First, as always, explore the data frame.
 
 ```{r}
-
-head(moon)
-
-summary(moon)
-
+# your code here
 ```
 
 Create a histogram of the number of admissions into the hospital. Choose a suitable number of bins or binsize. Add axis labels. Also add the mean number of admissions to the histogram with a green solid line.
 
 ```{r}
-
-ggplot(moon,aes(x=Admission)) + geom_histogram(bins=15) +   
-  geom_vline(aes(xintercept=mean(Admission, na.rm=T)),       # compute mean and add to plot as vertical line
-               color="green", linetype="solid", size=.75) +  # specify the looks of the line
-  xlab("Admissions") + ylab("Frequency") +   
-  theme_grey(base_size=14)          
-
+# your code here
 ```
 
 What happens when you set the number of bins too high or too low? 
@@ -203,14 +192,7 @@ Fill in the code below to use this. Instead of setting the number of bins, you n
 
 ```{r}
 
-bw <- 2 * IQR(moon$Admission) / length(moon$Admission)^(1/3)
-
-ggplot(moon,aes(x=Admission)) + geom_histogram(binwidth=bw) +   
-  geom_vline(aes(xintercept=mean(Admission, na.rm=T)),       # compute mean and add to plot as vertical line
-               color="green", linetype="solid", size=.75) +  # specify the looks of the line
-  xlab("Admissions") + ylab("Frequency") +   
-  theme_grey(base_size=14)          
-
+# your code here
 ```
 
 Is the result of this rule satisfying for this example?
@@ -220,45 +202,22 @@ Is the result of this rule satisfying for this example?
 Try to find out graphically if the moon phase has an influence on the admissions. You can do this either using facets or stacked histograms.
 
 ```{r}
-
-ggplot(moon,aes(x=Admission)) + geom_histogram(bins=15) + 
-  facet_grid(Moon ~ .) + 
-  xlab("Admissions") + ylab("Frequency") +   
-  theme_grey(base_size=14)          
-
-```
-or
-
-```{r}
-ggplot(moon, aes(x = Admission,fill = Moon)) + geom_histogram(bins = 15,position='stack') + theme_gray(base_size = 14)
+# your code here
 ```
 
 Now, compute group means and standard deviations over admissions for all combinations of moon phase and season. Plot a point plot with s.d. error bars which shows how hospital admissions vary as a function of season (x-axis) and moon phase. 
 
 ```{r}
 
-moon_gp <- summarySE(data = moon, measurevar = "Admission", groupvars = c("Moon", "Season"))    
-
-pd <- position_dodge(0.1)   # offset the groups a little to avoid 
-                  
-# The errorbars overlapped, so use position_dodge to move them horizontall
-ggplot(moon_gp, aes(x=Season, y=Admission, colour=Moon)) + 
-    geom_pointrange(aes(ymin=Admission-sd, ymax=Admission+sd), position=pd) +    # add errorbars
-    geom_point(position=pd) +                      # add points       
-    geom_line(position=pd, aes(group=Moon)) +        # add line
-    xlab("Season") + ylab("Admissions") + 
-    theme_grey(base_size=14)
-
+# your code here
 ```
 
 For the same question, also create a boxplot.
 
 ```{r}
 
-ggplot(moon, aes(x=Season, y=Admission, fill=Moon)) + 
-    geom_boxplot(width=.5) +       # add a box plot with slightly smaller width than normal
-    xlab("Season") + ylab("Admissions") + 
-    theme_grey(base_size=14)  
+
+# your code here 
 ```
 
 

@@ -40,15 +40,8 @@ Consider an example, in which you want to estimate the height of student populat
 height.response = na.omit(survey$Height)
 
 # your code here
-n = length(height.response) 
-s = sd(height.response)        # sample standard deviation 
-SE = s/sqrt(n)                 # standard error estimate 
-E = qt(.975, n-1) * SE
 
-xbar = mean(height.response)   # sample mean 
-xbar + c(-E,E)                 # mean and 95%-CI
 ```
-
 
 Please write a short sentence describing your result.
 
@@ -71,15 +64,6 @@ student.sex = na.omit(survey$Sex)
 
 
 # your code here
-n_male = sum(student.sex == "Male");
-
-n = length(student.sex) 
-p = n_male / n
-s = sqrt(p*(1-p))           # sample standard deviation 
-SE = s/sqrt(n)            # standard error estimate 
-E = qnorm(.975) * SE        # error margin
-
-p + c(-E, E)                # mean and 95% CI
 
 ```
 
@@ -123,51 +107,36 @@ preferences <- read.csv("D:/lab/teaching/statistics2016/R_for_biostatistics/tvsh
 tab <- count(preferences,sex,tvshow)
 
 # extract the cell counts, i.e. the observed n for each combination of sex and tv show
-n_boys_lr = filter(tab,sex=="boy",tvshow=="loneranger")$n 
-n_girls_lr = filter(tab,sex=="girl",tvshow=="loneranger")$n 
-n_boys_ss = filter(tab,sex=="boy",tvshow=="sesame")$n 
-n_girls_ss = filter(tab,sex=="girl",tvshow=="sesame")$n 
+
 
 # compute row n's, i.e. how many boys/girls
-n_boys = sum(filter(tab,sex=="boy")$n) 
-n_girls = sum(filter(tab,sex=="girl")$n) 
+
 
 # compute column n's, i.e. how many prefer the shows irrespective of their sex
-n_lr = sum(filter(tab,tvshow=="loneranger")$n)
-n_ss = sum(filter(tab,tvshow=="sesame")$n)
+
 
 # compute total n
-n = n_boys+n_girls
+
 
 # compute expected counts
-e_boys_lr = n_boys*n_lr/n
-e_boys_ss = n_boys*n_ss/n
-e_girls_lr = n_girls*n_lr/n
-e_girls_ss = n_girls*n_ss/n
+
 
 # compute chi2
-chi2 =  (n_boys_lr-e_boys_lr)^2/e_boys_lr + 
-        (n_boys_ss-e_boys_ss)^2/e_boys_ss +
-        (n_girls_lr-e_girls_lr)^2/e_girls_lr +
-        (n_girls_ss-e_girls_ss)^2/e_girls_ss
 
-chi2
 
 # compute p-value
-p = 1-pchisq(chi2,1)
 
-p
-
+# p
 ```
 
 Formulate a sentence summarizing this result.
 
 > Your answer here.
 
-Let's compare our manual result to the result of the corresponding R function:
+Let's compare our manual result to the result of the corresponding R function (*chisq.test*; set the *correct* option to FALSE):
 
 ```{r}
-chisq.test(preferences$sex,preferences$tvshow,correct=FALSE)
+# your code here
 ```
 
 If you implemented everything correctly, this will look reassuring.
@@ -182,14 +151,8 @@ We will work on the blood pressure example from the lecture. That is, we sample 
 data <- read.csv("D:/lab/teaching/statistics2016/R_for_biostatistics/bloodpressur.csv",sep=";")
 data$Group = factor(data$Group)
 
-sData = summarySE(data,measurevar="mmHg", groupvars="Group")
 
-ggplot(data, aes(x = Group, y = mmHg)) + 
-  geom_jitter(height = 0, width = .2) + 
-    geom_pointrange(sData, mapping= aes(ymin=mmHg-se, ymax=mmHg+se))+
-    xlab("Treatment group") + ylab("mmHg") + 
-    theme_grey(base_size=14) + 
-    ylim(5,25)
+# your code here
 
 ```
 
@@ -200,11 +163,7 @@ Formulate the null and the alternative hypothesis.
 A central assumption of the t-test is that the data is normally distributed. Make a qq-plot to check this assumption.
 
 ```{r}
-
-ggplot(data,aes(sample=mmHg)) +
-  stat_qq()+
-  facet_grid(.~Group)
-
+# your code here
 ```
 
 In practice, the test is fairly robust against violations of this assumption.
@@ -216,16 +175,8 @@ where $s_{pooled} = \sqrt{\frac{1}{n_1+n_2-2} [(n_1-1)s_1^2 + (n_2-1)s_2^2]}$ is
 Compute the value of the test statistic for the two samples.
 
 ```{r}
-data <- read.csv("D:/lab/teaching/statistics2016/R_for_biostatistics/bloodpressur.csv",sep=";")
-data$Group = factor(data$Group)
 
-sData = summarySE(data,measurevar="mmHg", groupvars="Group")
-
-dm <- sData$mmHg[1] - sData$mmHg[2] 
-spooled <- sqrt(1/(sData$N[1]+sData$N[1]-2) * ((sData$N[1]-1) * sData$sd[1]^2 + (sData$N[2]-1) * sData$sd[2]^2))
-n = sqrt(sData$N[1]*sData$N[2]/(sData$N[1]+sData$N[2]))
-
-t = dm*n/spooled
+# your code here
 
 ```
 
@@ -236,14 +187,15 @@ We next need to compare the value of the test statistic against the distribution
 For computing the p-value you need to find the probability of observing a value of t as or more extreme as the absolute value of the observed one under the null hypothesis. Use the function *qt* to compute the p-value. Make sure you think of both sides of the distribution. 
 
 ```{r}
-pval <- 2* (1 - pt(abs(t),sData$N[1]+sData$N[2]-2)) 
+
+# your code here
 ```
 
 
 Of course, you can also use the build in R function *t.test* to obtain the p-value. Use the help to find out how to use it.
 
 ```{r}
-t.test(data$mmHg[data$Group==1], data$mmHg[data$Group==2]) 
+# your code here
 ```
 
 Did you calculations give the same values? If yes, summarize the outcome of the testing procedure in one sentence.
@@ -257,7 +209,7 @@ The Wilcoxon rank sum test or Mann-Whitney-U-test is an alternative to the t-tes
 
 
 ```{r}
-wilcox.test(data$mmHg[data$Group==1], data$mmHg[data$Group==2]) 
+# your code here
 ```
 
 What do you observe? Do you have an idea why that happens?
