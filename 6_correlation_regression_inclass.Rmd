@@ -1,0 +1,78 @@
+```{r global_options, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.align="center", fig.height=4, fig.width=4)
+```
+
+#In-class worksheet 6
+
+**29 Feb to 4 Mar, 2016**
+
+In this worksheet you will learn to compute correlations and regression models on data. Please answer the questions in the document.
+
+## 1. Correlation
+
+We will try the correlation test on the built-in data set `cars`. The data set contains the speed of cars and the distances taken to stop, measured in the 1920s:
+
+```{r}
+head(cars)
+```
+
+Is there a relationship between speed and stopping distance? Use the function `cor.test()` to find out. Then make a scatterplot of speed vs. stopping distance.
+
+```{r}
+# R code goes here.
+```
+
+Please summarize your result.
+
+> Your answer here.
+
+
+## 2. Regression
+
+We will do a regression analysis on the data set `cabbages` from the R package MASS. The data set contains the weight (`HeadWt`), vitamin C content (`VitC`), the cultivar (`Cult`), and the planting date (`Date`) for 60 cabbage heads:
+
+```{r}
+library(MASS) # load the MASS library to make the data set available
+head(cabbages)
+```
+
+Use a multivariate regression to find out whether weight and cultivar have an effect on the vitamin C content. You will need to use the functions `lm()` and `summary()`. To fit a linear regression, you need to first fit the model to the data. This is done with the function `lm()` (lm stands for Linear Model). The`lm()` function takes two arguments, the formula (here `VitC ~ Cult + HeadWt`) and the data (here `cabbages`). The formula describes what kind of model we want to fit. On the left-hand side of the symbol ~, we write the response variable, here `VitC`. On the right-hand side, we write the predictor variables we want to use, separated by a + sign. Here, we use `Cult` and `HeadWt` as predictor variables. (You can learn more about formulas in R by typing ?formula into the R console.)
+
+```{r}
+# R code goes here.
+```
+
+Once you have fit the linear model, you can then display the results using the summary() function:
+
+```{r}
+# R code goes here.
+```
+
+Summarize the result:
+
+> Your answer here.
+
+Look into the function `predict()`. Can you use it to estimate the vitamin C content of a c52 cultivar with a weight of 4? Can you use it to calculate the residuals of the regression model?
+
+The predict function allows us to predict values from a linear model that we have previously fit. It takes two arguments, the fitted model (`fit` from above) and a data frame that has the same columns as were used as predictor variables in the linear model. Thus, to estimate the vitamin C content of a c52 cultivar with a weight of 4, we first create a data frame with one row. Then we run `predict()`:
+
+```{r}
+# R code goes here.
+```
+
+If we run predict with the original data frame then we get the model estimate for each data point (these values are also called the fitted values). By subtracting these values from the original y values we obtain the residuals:
+
+```{r}
+# R code goes here.
+```
+
+Note that the residuals are also available as `fit$residuals`. Plot the two sets of numbers to see that they are identical:
+
+
+```{r}
+# R code goes here.
+```
+
+
+
